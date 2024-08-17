@@ -1,1 +1,0 @@
-# RGB-Histogram-Analysis-Tool
