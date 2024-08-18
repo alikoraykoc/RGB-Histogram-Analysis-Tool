@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 from chardet import detect
 import argparse
+from os import mkdir, path
 
 
 def remove_brights(data, max_value):
@@ -25,17 +26,20 @@ def calculate_mean(dataframe, max_value):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input", required=True, help="Input directory")
-parser.add_argument("-o", "--output", required=True, help="Output directory")
+parser.add_argument("-i", "--input", required=True, help="Input directory", type=str)
+parser.add_argument("-o", "--output", required=False, help="Output directory", default="results", type=str)
 parser.add_argument("-m", "--max-value", required=True, help="Maximum value that you want to include to the "
-                                                             "calculations")
+                                                             "calculations", type=int)
 args = parser.parse_args()
+
+if args.output == "results" and not path.exists("./results"):
+    mkdir("./results")
 
 output_name = []
 output_mean = []
-directory = str(args.input)
+directory = args.input
 files = Path(directory).glob('*')
-mx_value = int(args.max_value)
+mx_value = args.max_value
 for file in files:
     if "/." in file.name or file.name[0] == ".":
         continue
@@ -57,7 +61,7 @@ dictionary = {
 }
 output_df = pd.DataFrame(dictionary)
 output_df.sort_values(by="individual", inplace=True)
-output_directory = str(args.output)
-output_df.to_excel(f"{output_directory}/results.xlsx")
+output_directory = args.output
+output_df.to_excel(f"{output_directory}/results.xlsx", index=False)
 print("Done! Note: Please move the output excel file to another directory before rerunning the script otherwise it may "
       "override the previous results.")
