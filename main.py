@@ -34,6 +34,7 @@ args = parser.parse_args()
 
 if args.output == "results" and not path.exists("./results"):
     mkdir("./results")
+    print("Results directory created at the working directory")
 
 output_name = []
 output_mean = []
@@ -47,10 +48,7 @@ for file in files:
         result = detect(f.read(10000))
         encoding = result["encoding"]
     df = pd.read_csv(file, delimiter="\t", encoding=encoding)
-    try:
-        mean = calculate_mean(df, mx_value)
-    except KeyError:
-        print(file.name)
+    mean = calculate_mean(df, mx_value)
     file = str(file)
     output_name.append(file.split("/")[-1].split(".")[0])
     output_mean.append(mean)
